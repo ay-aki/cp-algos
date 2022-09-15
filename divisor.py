@@ -7,7 +7,7 @@ def proc(N, n):
   if n**2 != N:
     ret.append(N//n)
 
-# 約数列挙アルゴリズム
+# 約数列挙アルゴリズム # O(√N)
 def divisor(N):
   sq_N = math.floor(math.sqrt(N))
   for n in range(1, sq_N + 1):
