@@ -1,2 +1,2 @@
 # cp-algos
-These are my competitive programing algorithms. 
+These are my codes for competitive programing.
