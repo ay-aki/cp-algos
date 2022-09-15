@@ -1,6 +1,6 @@
 import math
 
-# 素数判定 # O(√n)
+# 素数判定 # O(√N)
 def is_prime(N):
   sq_N = math.floor(math.sqrt(N))
   for n in range(2, sq_N + 1):
