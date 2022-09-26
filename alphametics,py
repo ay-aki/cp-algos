@@ -97,3 +97,4 @@ argv = ["SEND", "MORE", "MONEY"]
 p    = Prob(argv)
 
 alphametics(argv)
+
