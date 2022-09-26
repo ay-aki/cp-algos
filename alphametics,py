@@ -1,0 +1,99 @@
+# Alphametics
+
+# import sys
+import numpy as np
+import itertools
+
+class Prob():
+    def __init__(self, argv):
+        self.s    = "0123456789ABCDEFGHIJKLMNOPQRTSUVWXYZ"
+        self.argv = argv
+        self.imax = len(argv)
+        self.jmax = max(map(len, argv))
+        self.digit= None
+        self.l    = None
+        self.word = None
+        self.initialize(self.argv) # l, digit, word
+        self.ok   = [True] * 10 # [False] * 10
+        self.carry= 0
+        self.solution = 0
+    def initialize(self, argv):
+        imax, jmax = len(argv), max(map(len, argv))
+        # word  逆順に並べたワードリスト
+        word = np.array([list(reversed(a))+[""]*(jmax-len(a)) for a in argv])
+        # l     
+        tmp = [a[0] for a in argv]
+        l = np.array([(1 if c in tmp else 0) for c in self.s])
+        # digit 文字c -> 数字
+        tmp = set(itertools.chain.from_iterable(word)) - {""} # removeは使わない
+        digit = np.array([
+            (0 if not c in tmp else (int(c) if c.isdigit() else -1))
+            for c in self.s]) # isalpha
+        self.word = word
+        self.l    = l
+        self.digit= digit
+
+# 解の表示
+def found():
+    p.solution += 1
+    print("Solution:", p.solution)
+    for i in range(p.imax):
+        if (i == p.imax-1):
+            print("-"*p.jmax)
+        for j in range(p.jmax):
+            k = p.jmax-1-j
+            c = p.word[i][k]
+            if (c == ''):
+                print(" ", end="")
+            else:
+                print("%d" % p.digit[p.s.index(c)], end='')
+        print("")
+
+i10 = np.array([1, 0])
+i01 = np.array([0, 1])
+
+def tr(sum, i):
+    w = p.word[tuple(i)]
+    c = 0 if w == '' else p.s.index(w)
+    # i[0]方向へ
+    if (i[0] < p.imax-1):
+        i += i10
+        # cの数字が定まっていないならば
+        if (p.digit[c] < 0):   
+            for d in range(p.l[c], 10): # 順に試していく
+                if p.ok[d]:
+                    p.digit[c] = d
+                    p.ok[d] = False
+                    tr(sum+d, i)
+                    p.ok[d] = True
+            p.digit[c] = -1
+        else: 
+            d = p.digit[c]
+            tr(sum + d, i)
+        i -= i10
+    # i[1]方向へ
+    else:
+        i[0] = 0
+        i += i01
+        carry, d = divmod(sum, 10)
+        if (p.digit[c] == d):
+            if (i[1] < p.jmax): tr(carry, i)
+            elif (carry == 0): found()
+        else:
+            if (p.digit[c] < 0 and p.ok[d] and d >= p.l[c]):
+                p.digit[c] = d
+                p.ok[d] = False 
+                if (i[1] < p.jmax): tr(carry, i)
+                elif (carry == 0): found()
+                p.digit[c], p.ok[d] = -1, True
+        i[0] = p.imax-1
+        i -= i01
+
+def alphametics(argv):
+    tr(0, np.array([0, 0]))
+    if (p.solution == 0): print("no solution")
+
+argv = ["SEND", "MORE", "MONEY"]
+p    = Prob(argv)
+
+alphametics(argv)
