@@ -24,6 +24,9 @@ function jl_bgmres_history(it, reslist, klist)
         , k   = collect(klist[1:it+1])
     )
 end
+function jl_bgmres_history_0()
+    return (it = 0, res = [], d = [], k = [])
+end
 
 
 
@@ -101,7 +104,7 @@ function jl_bgmres(
     )
 )
     # Initialize
-    z = Pr \ b; if (norm(b - A*z) < tolb) x0 .= z; return x0, 0, [], [] end
+    z = Pr \ b; if (norm(b - A*z) < tolb) x0 .= z; return x0, jl_bgmres_history_0() end
     # Iteration (Restart)
     it = 0; while true
         # Constract orth [v(1),v(2),...,v(m)]
